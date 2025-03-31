@@ -6,10 +6,10 @@ class Knight
   def initialize()
     @graph = populate_graph
     find_siblings
-    puts @graph[4][3].siblings.to_s
+    #puts @graph[4][3].siblings.to_s
   end
 
-  def populate_graph()
+  def populate_graph
     return Array.new(8) { |x|
       Array.new(8) { |y| Node.new([x, y]) }
     }
@@ -47,8 +47,8 @@ class Knight
   def find(vertex)
     return nil if !vertex.kind_of?(Array)
     str = "#{vertex}" #> [4, 3]
-    x = str[1].to_i #> "1"
-    y = str[4].to_i #> "4"
+    x = str[1].to_i #> "4"
+    y = str[4].to_i #> "3"
 
     node = @graph[x][y]
     return node
@@ -86,6 +86,92 @@ class Knight
     return y_arr
   end
 
+  def no(int)
+    str = int.to_s
+    return nil if str.length != 2
+    return @graph[str[0].to_i][str[1].to_i]
+  end
+
+  def testy(vertex=[4, 3], org=find(vertex))
+    node = find(vertex)
+    exit_cond = nil
+    target = [4, 5]
+
+    used_array = []
+    loop_i = 0
+    i = 0
+
+    if node == org
+      print "#{node.siblings}\n"
+      for sibling in node.siblings
+        puts "This is sibling: #{sibling}"
+
+        result = testy(sibling, org)
+        return result if result
+      end
+      return nil
+    end
+
+    if org.siblings.include?(node.data)
+      for sibling in node.siblings
+        puts "This is nested sibling: #{sibling}"
+
+        result = testy(sibling, org)
+        return result if result
+      end
+      return nil
+    end
+
+    until exit_cond do
+      puts "\niteration #{loop_i + 1}"
+      loop_i += 1
+      used_array << node.data
+      print "Node: "
+      p node.data
+      #print "Siblings: "
+      #p node.siblings
+      #print "Used_array "
+      #p used_array
+
+      if node.data == target
+        puts "MATCH!!!!"
+        puts "MATCH!!!!"
+        puts "MATCH!!!!"
+        puts "MATCH!!!!"
+        puts "MATCH!!!!"
+        puts "MATCH!!!!"
+        puts "MATCH!!!!"
+        puts "MATCH!!!!"
+        puts "MATCH!!!!"
+        puts "MATCH!!!!"
+        puts "MATCH!!!!"
+        puts "MATCH!!!!"
+        puts "MATCH!!!!"
+        puts "MATCH!!!!"
+        puts "Path: #{used_array}\nMoves: #{loop_i}"
+        return [used_array, loop_i]
+      end
+
+      #puts "node.s.i: #{node.siblings[i]} node.s.i - 1: #{node.siblings[(i - 1)]}"
+      #puts "t/f: #{i >= node.siblings.length}"
+      until !used_array.include?(node.siblings[i]) || !node do
+        i += 1
+        if i >= node.siblings.length - 1
+          puts "No further options.\n\n"
+          puts "Path: #{used_array}\nMoves: #{loop_i}"
+          exit_cond = true
+        end
+      end
+      node = find(node.siblings[i])
+      puts "i: #{i}"
+      i = 0
+      sleep 0.1
+    end
+    puts "Couldn't find target: #{target}"
+    return nil
+
+
+  end
 
 end
 
