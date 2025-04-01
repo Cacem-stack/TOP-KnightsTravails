@@ -61,84 +61,37 @@ class Knight
     return @graph[str[0].to_i][str[1].to_i]
   end
 
-  def testy(vertex=[4, 3], org=find(vertex))
-    node = find(vertex)
-    exit_cond = nil
-    target = [4, 5]
+  def traversal(start_vertex, target_vertex, org=find(start_vertex), used_nodes=[], path=[])
+    node = find(start_vertex)
 
-    loop_i = 0
-    i = 0
+    return { path: nil, used_nodes: node.data } if used_nodes.include?(node.data)
+    #path += [node.data] if node != org
+    path += [node.data] if node != org
+
+    if node.siblings.include?(target_vertex)
+      path << target_vertex
+      puts "\nopt 1\n\n"
+      puts "Your Path is #{path} in #{path.length} move(s)"
+      return { path: path, used_nodes: used_nodes }
+    else
+      #return { path: nil, used_nodes: used_nodes}
+      used_nodes << node.data
+    end
 
     if node == org
-      @used_array = []
-      print "#{node.siblings}\n"
-      for sibling in node.siblings
-        puts "This is sibling: #{sibling}"
-
-        result = testy(sibling, org)
-        return result if result
-      end
-      return nil
-    end
-
-    if org.siblings.include?(node.data)
-      for sibling in node.siblings
-        puts "This is nested sibling: #{sibling}"
-
-        result = testy(sibling, org)
-        return result if result
-      end
-      return nil
-    end
-
-    until exit_cond do
-      puts "\niteration #{loop_i + 1}"
-      loop_i += 1
-      @used_array << node.data
-      print "Node: "
-      p node.data
-      print "Target: "
-      p target
-      #print "Siblings: "
-      #p node.siblings
-      #print "@used_array "
-      #p @used_array
-
-      if node.data == target
-        puts "MATCH!!!!"
-        puts "MATCH!!!!"
-        puts "MATCH!!!!"
-        puts "MATCH!!!!"
-        puts "MATCH!!!!"
-        puts "MATCH!!!!"
-        puts "MATCH!!!!"
-        puts "MATCH!!!!"
-        puts "MATCH!!!!"
-        puts "MATCH!!!!"
-        puts "MATCH!!!!"
-        puts "MATCH!!!!"
-        puts "MATCH!!!!"
-        puts "MATCH!!!!"
-        puts "Path: #{@used_array}\nMoves: #{loop_i}"
-        return [@used_array, loop_i]
-      end
-
-      #puts "node.s.i: #{node.siblings[i]} node.s.i - 1: #{node.siblings[(i - 1)]}"
-      #puts "t/f: #{i >= node.siblings.length}"
-      until !@used_array.include?(node.siblings[i]) || !node do
-        i += 1
-        if i >= node.siblings.length - 1
-          puts "No further options.\n\n"
-          puts "Path: #{@used_array}\nMoves: #{loop_i}"
-          exit_cond = true
+      node.siblings.each do |sibling|
+        sibling_traversal_result = traversal(sibling, target_vertex, org, used_nodes, path) #> returns hash with :path, :used_array
+        return sibling_traversal_result
+        if !sibling_traversal_result[:path]
+          used_nodes << sibling_traversal_result[:used_nodes]
+        elsif sibling_traversal_result[:path]
+          path = sibling_traversal_result[:path]
+          puts "\nopt2\n\n"
+          puts "Your Path is #{path} in #{path.length} move(s)"
+          return path
         end
       end
-      node = find(node.siblings[i])
-      puts "i: #{i}"
-      i = 0
     end
-    puts "Couldn't find target: #{target}"
-    return nil
 
 
   end
